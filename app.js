@@ -1,12 +1,13 @@
 const express = require('express');
 const app = express();
 const axios = require('axios');
-const Movie = require('./Movie');
+const Assignment = require('./assignment');
+const youtubeapikey = 'AIzaSyC4vvaXvMlvXcvq5CmeZFFUFqTvBeK99vo';
 //const path = require('path'); //---heroku---
 const cors = require('cors');
-const apikey = '385e80';
+// const apikey = '385e80';
 
-const port = process.env.PORT || 2000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(function(req, res, next) {
@@ -18,54 +19,51 @@ app.use(function(req, res, next) {
   next();
 });
 
-//localhost:5000/getmovie?title=MovieTitle
-app.get('/getmovie', (req, res) => {
-  const title = req.query.title;
-  const querystr = `http://www.omdbapi.com/?t=${title}&apikey=${apikey}`;
+//localhost:5000/gethero?id=id
+app.get('/gethero', (req, res) => {
+  const id = req.query.id;
+  const querystr = `https://overwatch-api.net/api/v1/hero/${id}`;
 
-  axios
-    .get(querystr)
-    .then(response => {
-      const movie = new Movie({
-        title: response.data.Title,
-        year: response.data.Year,
-        genre: response.data.Genre,
-        actors: response.data.Actors,
-        plot: response.data.Plot,
-        poster: response.data.Poster
-      });
-      if (!movie.title) {
-        res.status(200).json('Not found');
-        return;
-      }
-      movie
-        .save()
-        .then(response => {
-          res.status(200).json(response);
-        })
-        .catch(error => {
-          res.status(400).json(error);
+  axios.get(querystr).then(response => {
+    const id = response.data.id;
+    const name = response.data.name;
+    const description = response.data.description;
+    const health = response.data.health;
+    const age = response.data.age;
+    const height = response.data.height;
+    const oname = `overwatch ${name}`;
+
+    const querystr2 = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${oname}&maxResults=5&key=${youtubeapikey}`;
+    axios
+      .get(querystr2)
+      .then(response2 => {
+        const videoid = response2.data.items[0].id.videoId;
+        const url = `www.youtube.com/watch?v=${videoid}`;
+        const assignment = new Assignment({
+          youtubeurl: url,
+          id: id,
+          name: oname,
+          description: description,
+          health: health,
+          age: age,
+          height: height
         });
-    })
-    .catch(error => {
-      res.status(400).json(error);
-    });
+        return assignment.save();
+      })
+
+      .then(response => {
+        res.status(200).json(response);
+      })
+      .catch(error => {
+        console.log(error);
+        res.status(400).json(error);
+      });
+  });
 });
 
-//localhost:5000/getallmovies
-app.get('/getallmovies', (req, res) => {
-  Movie.find({})
-    .then(response => {
-      res.status(200).send(response);
-    })
-    .catch(error => {
-      res.status(400).send(error);
-    });
-});
-
-//localhost:5000/deletemovie?title=MovieTitle
-app.get('/deletemovie', (req, res) => {
-  Movie.deleteMany({ title: req.query.title })
+//localhost:3000/deletehero?id=id
+app.get('/deletehero', (req, res) => {
+  Assignment.deleteMany({ id: req.query.id })
     .then(response => {
       res.status(200).json(response);
     })
@@ -75,5 +73,5 @@ app.get('/deletemovie', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`server listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });
