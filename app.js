@@ -61,6 +61,17 @@ app.get('/gethero', (req, res) => {
   });
 });
 
+//localhost:3000/getallheroes
+app.get('/getallheroes', (req, res) => {
+  Assignment.find({})
+    .then(response => {
+      res.status(200).send(response);
+    })
+    .catch(error => {
+      res.status(400).send(error);
+    });
+});
+
 //localhost:3000/deletehero?id=id
 app.get('/deletehero', (req, res) => {
   Assignment.deleteMany({ id: req.query.id })
