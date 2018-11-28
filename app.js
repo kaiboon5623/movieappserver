@@ -39,7 +39,7 @@ app.get('/gethero', (req, res) => {
       .then(response2 => {
         const videoid = response2.data.items[0].id.videoId;
         const url = `www.youtube.com/watch?v=${videoid}`;
-        const youtubeimg = youtuberes.data.items[0].snippet.thumbnails.high.url;
+        const youtubeimg = response2.data.items[0].snippet.thumbnails.high.url;
         const assignment = new Assignment({
           youtubeurl: url,
           id: id,
