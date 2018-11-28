@@ -20,7 +20,8 @@ const schema = mongoose.Schema({
   health: { type: String },
   age: { type: String },
   height: { type: String },
-  youtubeurl: { type: String }
+  youtubeurl: { type: String },
+  youtubeimg: { type: String }
 });
 
 const assignment = mongoose.model('assignment', schema, 'assignmentCollection');
