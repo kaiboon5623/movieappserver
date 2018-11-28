@@ -43,7 +43,7 @@ app.get('/gethero', (req, res) => {
         const assignment = new Assignment({
           youtubeurl: url,
           id: id,
-          youtubeimg: youtubeimg,
+          tubeimg: youtubeimg,
           name: name,
           description: description,
           health: health,
