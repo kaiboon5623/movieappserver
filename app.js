@@ -31,7 +31,7 @@ app.get('/gethero', (req, res) => {
     const health = response.data.health;
     const age = response.data.age;
     const height = response.data.height;
-    const oname = `overwatch ${name}`;
+    const oname = `${name} Origin Story`;
 
     const querystr2 = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${oname}&maxResults=5&key=${youtubeapikey}`;
     axios
@@ -42,7 +42,7 @@ app.get('/gethero', (req, res) => {
         const assignment = new Assignment({
           youtubeurl: url,
           id: id,
-          name: oname,
+          name: name,
           description: description,
           health: health,
           age: age,
